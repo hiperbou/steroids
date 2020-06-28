@@ -40,7 +40,7 @@ class TitleScene() : SceneBase() {
 
     inner class inicio:Process(sceneView) {
         override suspend fun main() {
-            with(foto(1,160,119,100,100,0)){ //llamada para crear imagen del fondo
+            with(foto(1,160,119,100,100,0)) { //llamada para crear imagen del fondo
                 launchAsap {
                     loop {
                         scaleX = 1.0
@@ -71,9 +71,6 @@ class TitleScene() : SceneBase() {
             text("${currentGameState.puntuacion}", 15.0, font = Resources.font)
                     .alignTopToTopOf(containerRoot)
                     .alignRightToRightOf(containerRoot)
-
-
-
 
             delay(1.seconds)
 

@@ -113,7 +113,7 @@ class GameScene() : SceneBase() {
     }
 
     fun Container.updateLevelText(){
-        pointsText.apply {
+        levelText.apply {
             text = "LEVEL ${currentGameState.nivel}"
             alignRightToRightOf(containerRoot)
         }

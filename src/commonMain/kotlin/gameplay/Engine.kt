@@ -1,6 +1,7 @@
 package gameplay
 
 
+import com.soywiz.klock.Frequency
 import com.soywiz.klock.milliseconds
 import com.soywiz.kmem.setBits
 import com.soywiz.kmem.unsetBits
@@ -9,11 +10,9 @@ import com.soywiz.korge.input.onKeyUp
 import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.time.delay
 import com.soywiz.korge.time.delayFrame
+import com.soywiz.korge.time.timers
 import com.soywiz.korge.time.waitFrame
-import com.soywiz.korge.view.Container
-import com.soywiz.korge.view.Image
-import com.soywiz.korge.view.View
-import com.soywiz.korge.view.anchor
+import com.soywiz.korge.view.*
 import com.soywiz.korim.bitmap.Bitmap32
 import com.soywiz.korim.bitmap.BmpSlice
 import com.soywiz.korim.bitmap.slice
@@ -26,6 +25,8 @@ import input.getButtonPressed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import resources.Resources
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
 
 val PI = kotlin.math.PI
@@ -51,12 +52,6 @@ fun get_disty(angle:Double, dist:Number) = dist.toDouble() * sin(Angle.Companion
     return (dx+dy-(min >> 1)-(min >> 2)+(min>>3)+(min>> 4));
 }*/
 
-suspend fun Container.frame() {
-    //delayFrame()
-    delay(41.milliseconds)
-}
-
-
 private val imageCache = mutableMapOf<Int, BmpSlice>()
 fun getImage(graph:Int): BmpSlice {
     return imageCache.getOrPut(graph) {
@@ -69,6 +64,22 @@ private lateinit var currentScene:Scene
 
 abstract class SceneBase:Scene()
 {
+    private val frameReady = Signal<Unit>()
+    private var frameListenerInitialized = false
+
+    suspend fun Container.frame() = suspendCoroutine<Unit> { cont ->
+        if(!frameListenerInitialized) {
+            frameListenerInitialized = true
+            addFixedUpdater(Frequency(24.0)) {
+                frameReady.invoke()
+            }
+        }
+        launchImmediately {
+            frameReady.waitOneBase()
+            cont.resume(Unit)
+        }
+    }
+
     init {
         currentScene = this
     }
