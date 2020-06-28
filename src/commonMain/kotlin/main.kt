@@ -17,7 +17,7 @@ object SteroidsGameModule : Module() {
 	override val windowSize = SizeInt(640, 480)
 	override val targetFps = 24.0
 
-	override val bgcolor = Colors["#2b2b2b"]
+	override val bgcolor = Colors.BLACK
 	override val mainScene: KClass<out Scene> = LoadingScene::class
 
 	override suspend fun init(injector: AsyncInjector): Unit = injector.run {
