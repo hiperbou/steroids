@@ -2,16 +2,11 @@ package gameplay
 
 
 import com.soywiz.klock.Frequency
-import com.soywiz.klock.milliseconds
 import com.soywiz.kmem.setBits
 import com.soywiz.kmem.unsetBits
 import com.soywiz.korge.input.onKeyDown
 import com.soywiz.korge.input.onKeyUp
 import com.soywiz.korge.scene.Scene
-import com.soywiz.korge.time.delay
-import com.soywiz.korge.time.delayFrame
-import com.soywiz.korge.time.timers
-import com.soywiz.korge.time.waitFrame
 import com.soywiz.korge.view.*
 import com.soywiz.korim.bitmap.Bitmap32
 import com.soywiz.korim.bitmap.BmpSlice
@@ -22,8 +17,6 @@ import com.soywiz.korma.geom.cos
 import com.soywiz.korma.geom.sin
 import extensions.toBool
 import input.getButtonPressed
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
 import resources.Resources
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -56,7 +49,7 @@ private val imageCache = mutableMapOf<Int, BmpSlice>()
 fun getImage(graph:Int): BmpSlice {
     return imageCache.getOrPut(graph) {
         return if(graph==0) Process.emptyImage.slice() else
-        Resources.pafAtlas["${graph.toString().padStart(3, '0')}.png"]//.texture
+        Resources.steroidsAtlas["${graph.toString().padStart(3, '0')}.png"]//.texture
     }
 }
 
@@ -128,7 +121,7 @@ abstract class Process(parent: Container) : Image(emptyImage) {
     open suspend fun main() {}
 
     inline fun loop(block:()->Unit) {
-        while(true) {
+        while(parent!=null) {
             block()
         }
     }

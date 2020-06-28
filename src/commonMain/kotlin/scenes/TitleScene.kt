@@ -15,9 +15,6 @@ import gameplay.*
 import input.*
 import resources.Resources
 
-var musicPlaying = 0
-
-
 
 class TitleScene() : SceneBase() {
 
@@ -25,16 +22,7 @@ class TitleScene() : SceneBase() {
 
 
     override suspend fun Container.sceneInit() {
-
         Resources(views).loadAll()
-
-        pafSounds = SteroidsSounds(Resources.tubo5Sound,Resources.fx33Sound, Resources.naveSound, Resources.naveSound)
-
-        if(musicPlaying == 0){
-            musicPlaying = 1
-            pafSounds.playMusic()
-        }
-
         inicio()
     }
 

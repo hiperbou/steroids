@@ -115,7 +115,7 @@ class GameScene() : SceneBase() {
     fun Container.updateLevelText(){
         levelText.apply {
             text = "LEVEL ${currentGameState.nivel}"
-            alignRightToRightOf(containerRoot)
+            alignLeftToLeftOf(containerRoot)
         }
     }
 

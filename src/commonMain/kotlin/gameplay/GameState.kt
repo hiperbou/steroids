@@ -17,13 +17,14 @@ class GameState() {
     var vidas = 4
 
 
-    //val arrowCollisions = Collisions<GameScene.disparo>()
-    //val ballCollision = Collisions<GameScene.bola>()
-    //val playerCollision = Collisions<Player>()
+    //val arrowCollisions = Collisions<GameScene.disparo_nave>()
+    //val ballCollision = Collisions<GameScene.asteroide>()
+    //val playerCollision = Collisions<GameScene.nave>()
 
     fun resetCollisions(){
         //arrowCollisions.reset()
         //ballCollision.reset()
+        //playerCollision.reset()
     }
 }
 
