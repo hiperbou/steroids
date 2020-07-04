@@ -20,7 +20,7 @@ object SteroidsGameModule : Module() {
 	override val targetFps = 24.0
 
 	override val bgcolor = Colors.BLACK
-	override val mainScene: KClass<out Scene> = LoadingScene::class
+	override val mainScene: KClass<out Scene> = BugScene::class
 
 	override suspend fun init(injector: AsyncInjector): Unit = injector.run {
 		//mapInstance(GameState())
@@ -29,6 +29,7 @@ object SteroidsGameModule : Module() {
 		mapPrototype { LoadingScene(/*get()*/) }
 		mapPrototype { TitleScene(/*get()*/) }
 		mapPrototype { GameScene(/*get()*/) }
+		mapPrototype { BugScene(/*get()*/) }
 
 	}
 }

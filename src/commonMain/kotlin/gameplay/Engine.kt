@@ -68,17 +68,15 @@ abstract class SceneBase:Scene()
     private val frameReady = Signal<Unit>()
     private var frameListenerInitialized = false
 
-    suspend fun Container.frame() = suspendCoroutine<Unit> { cont ->
+    suspend fun Container.frame() {
         if(!frameListenerInitialized) {
             frameListenerInitialized = true
             addFixedUpdater(Frequency(24.0)) {
                 frameReady.invoke()
             }
         }
-        launchImmediately {
-            frameReady.waitOneBase()
-            cont.resume(Unit)
-        }
+
+        frameReady.waitOneBase()
     }
 
     init {
