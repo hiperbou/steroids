@@ -4,6 +4,8 @@ package gameplay
 import com.soywiz.klock.Frequency
 import com.soywiz.kmem.setBits
 import com.soywiz.kmem.unsetBits
+import com.soywiz.korge.component.StageComponent
+import com.soywiz.korge.component.registerStageComponent
 import com.soywiz.korge.input.onKeyDown
 import com.soywiz.korge.input.onKeyUp
 import com.soywiz.korge.scene.Scene
@@ -17,6 +19,7 @@ import com.soywiz.korma.geom.cos
 import com.soywiz.korma.geom.sin
 import extensions.toBool
 import input.getButtonPressed
+import kotlinx.coroutines.Job
 import resources.Resources
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -109,19 +112,32 @@ abstract class Process(parent: Container) : Image(emptyImage) {
         }
 
     init {
+        lateinit var job: Job
+
+        addComponent(object : StageComponent {
+            override val view: View = this@Process
+
+            override fun added(views: Views) {
+                job = launchAsap {
+                    main()
+                    removeFromParent()
+                }
+            }
+
+            override fun removed(views: Views) {
+                job.cancel()
+            }
+        })
+
         parent.addChild(this)
         anchor(0.5, 0.5)
         smoothing = false
-        currentScene.launchAsap {
-            main()
-            removeFromParent()
-        }
     }
 
-    open suspend fun main() {}
+    abstract suspend fun main()
 
     inline fun loop(block:()->Unit) {
-        while(parent!=null) {
+        while(true) {
             block()
         }
     }
@@ -147,11 +163,15 @@ abstract class Process(parent: Container) : Image(emptyImage) {
     fun <T>async(callback: suspend () -> T) = currentScene.async(callback)
     fun <T>asyncImmediately(callback: suspend () -> T) = currentScene.asyncImmediately(callback)
     fun <T>asyncAsap(callback: suspend () -> T) = currentScene.asyncAsap(callback)
-
-
 }
 
 
+private var initialized = false
+fun Views.registerProcessSystem() {
+    if(initialized) return
+    initialized = true
+    registerStageComponent()
+}
 
 
 

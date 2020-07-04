@@ -9,6 +9,7 @@ import com.soywiz.korim.font.BitmapFont
 import com.soywiz.korim.font.readBitmapFont
 
 import com.soywiz.korio.file.std.resourcesVfs
+import gameplay.registerProcessSystem
 
 class Resources(private val views: Views) {
     companion object{
@@ -28,6 +29,8 @@ class Resources(private val views: Views) {
     suspend fun loadAll() {
         if(loaded) return
         loaded = true
+
+        views.registerProcessSystem()
 
         loadGfx()
         loadMusic()

@@ -47,7 +47,7 @@ class GameScene() : SceneBase() {
         space()
 
         fun startLevel() {
-            nave(320,240);                          // Inicia la nave
+            nave().position(320,240)                          // Inicia la nave
 
             // Inicia los asteroides, crea los procesos tipo asteroide
             (0..2 + currentGameState.nivel).forEach {
@@ -251,14 +251,13 @@ class GameScene() : SceneBase() {
         }
     }
 
-    inner class nave(val xx: Number, val yy: Number) : Process(sceneView) {
+    inner class nave() : Process(sceneView) {
         override suspend fun main() {
             var disparo = 1              // 1=disparo permitido, 0=no permitido
             var hiper = 1                // 1=hiperespacio permitido, 0=no permitido
             var velocidad_x = 0.0          // incremento x
             var velocidad_y = 0.0          // incremento y
 
-            position(xx, yy)
             graph = 1
 
             val _left = BUTTON_LEFT
