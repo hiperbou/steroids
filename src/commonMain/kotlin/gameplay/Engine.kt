@@ -1,6 +1,7 @@
 package gameplay
 
 
+import com.soywiz.kds.atomic.kdsIsFrozen
 import com.soywiz.klock.Frequency
 import com.soywiz.kmem.setBits
 import com.soywiz.kmem.unsetBits
@@ -19,11 +20,15 @@ import com.soywiz.korma.geom.cos
 import com.soywiz.korma.geom.sin
 import extensions.toBool
 import input.getButtonPressed
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.cancelChildren
 import resources.Resources
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
+import kotlin.reflect.*
 
 val PI = kotlin.math.PI
 
@@ -95,6 +100,9 @@ abstract class Process(parent: Container) : Image(emptyImage) {
         val emptyImage = Bitmap32(1,1)
     }
 
+    open val pname:String
+        get() = this::class.simpleName ?: "process"
+
     private var _graph = 0
     var graph:Int
         get() =  _graph
@@ -119,13 +127,33 @@ abstract class Process(parent: Container) : Image(emptyImage) {
 
             override fun added(views: Views) {
                 job = launchAsap {
-                    main()
-                    removeFromParent()
+                    //main()
+                    //removeFromParent()
+                    var action = ::main
+                    while (true) {
+                        try {
+                            action()
+                            removeFromParent()
+                            break
+                        } catch (e: ChangeActionException) {
+                            action = e.action
+                        }
+                    }
                 }
             }
 
             override fun removed(views: Views) {
-                job.cancel()
+                println("REMOVING ${pname}")
+                launch {
+                    job.cancel()
+                    println(job.isActive)
+                    println(job.isCancelled)
+                    println(job.isCompleted)
+                    println(job.kdsIsFrozen)
+                    job.join()
+                    println("ACTUALLY CANCELLED ${pname}")
+                }
+
             }
         })
 
@@ -142,6 +170,7 @@ abstract class Process(parent: Container) : Image(emptyImage) {
         }
     }
 
+    class ChangeActionException(val action: KSuspendFunction0<Unit>) : Exception()
 
     private var key = 0
     private var keyListener = false

@@ -20,8 +20,6 @@ class GameScene() : SceneBase() {
 
         steroidsSounds = SteroidsSounds(Resources.tubo5Sound, Resources.tubo8Sound, Resources.fx33Sound, Resources.naveSound)
 
-        currentGameState.resetCollisions()
-
 
         val vida = listOf(nave_pequena(16,16),
             nave_pequena(48,16),
@@ -47,6 +45,8 @@ class GameScene() : SceneBase() {
         space()
 
         fun startLevel() {
+            currentGameState.resetCollisions()
+
             nave().position(320,240)                          // Inicia la nave
 
             // Inicia los asteroides, crea los procesos tipo asteroide
@@ -166,7 +166,14 @@ class GameScene() : SceneBase() {
         }
     }
 
-    inner class disparo_nave(val xx: Number, val yy: Number, val initialAngle:Number) : Process(sceneView) {
+    var disparoId = 0
+    inner class disparo_nave(val xx: Number, val yy: Number, val initialAngle:Number) : Process(sceneView), ICollider {
+        override val pname = "disparo_nave${disparoId++}"
+
+        val collider = Collider(currentGameState.arrowCollisions,  this)
+        override var alive = collider.alive
+        override fun destroy() { collider.destroy() }
+
         override suspend fun main() {
             var cont = 20
 
@@ -190,7 +197,10 @@ class GameScene() : SceneBase() {
         }
     }
 
+    var asteroideId = 0
     inner class asteroide(val xx: Number, val yy: Number, val initialGraph: Int) : Process(sceneView) {
+        override val pname = "asteroideId${asteroideId++}"
+
         override suspend fun main() {
             var velocidad = 0                // Velocidad de los asteroides
             var id2 = 0                    // Identificador de uso general
@@ -246,12 +256,54 @@ class GameScene() : SceneBase() {
                 if (y>480+16) y -= 480 + 32
 
                 angle += incr_angulo                 // Gira el asteroide
+
+                /*val it = currentGameState.arrowCollisions.colidesWith(this, 20)
+                if(it != null) {
+                    currentGameState.puntuacion += 25 * graph + (currentGameState.nivel - 1) * 25;  // Suma puntuación
+                    updatePointsText()
+                    it.destroy()
+                    it.removeFromParent() // Elimina el disparo
+                    //sound(sonido_explosion, 30 * (6 - graph), 33 * graph);
+                    steroidsSounds.playExplosion()
+                    if (graph < 5)  {                        // Si el asteroide es muy grande
+                        asteroide(x, y, graph + 1);         // Crea dos más pequenos
+                        asteroide(x, y, graph + 1);
+                    }
+                    if(graph == 3) {                    // Si es el asteroide más grande
+                        asteroide(x, y, graph + 1);         // Crea uno más (3 en total)
+                    }
+                    removeFromParent()//signal(ID, s_kill);                  // Elimina el asteroide actual
+                } else {
+                    val it = currentGameState.playerCollision.colidesWith(this, 40)
+                    if(it != null)
+                    {
+                        it.destroy()
+                        it.removeFromParent()
+                        //sound(sonido_explosion, 200, 100)// Hace sonido de destrucción
+                        steroidsSounds.playExplosion()
+                        currentGameState.volumen = 0
+
+                        pieza(it.x, it.y, it.angle, 6) // Destruye la nave en piezas
+                        pieza(it.x, it.y, it.angle, 7)
+                        pieza(it.x, it.y, it.angle, 8)
+                        pieza(it.x, it.y, it.angle, 9)
+                    }
+                }*/
+
                 frame()
             }
         }
     }
 
-    inner class nave() : Process(sceneView) {
+    var naveID = 0
+    inner class nave() : Process(sceneView), ICollider {
+
+        override val pname = "nave${naveID++}"
+
+        val collider = Collider(currentGameState.playerCollision,  this)
+        override var alive = collider.alive
+        override fun destroy() { collider.destroy() }
+
         override suspend fun main() {
             var disparo = 1              // 1=disparo permitido, 0=no permitido
             var hiper = 1                // 1=hiperespacio permitido, 0=no permitido
