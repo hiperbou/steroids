@@ -194,6 +194,7 @@ class GameScene() : SceneBase() {
                 if (y>480+16) y-=480+32
                 frame()
             }
+            //destroy()
         }
     }
 
@@ -274,7 +275,7 @@ class GameScene() : SceneBase() {
                     }
                     removeFromParent()//signal(ID, s_kill);                  // Elimina el asteroide actual
                 } else {
-                    val it = currentGameState.playerCollision.colidesWith(this, 40)
+                    val it = currentGameState.playerCollision.colidesWith(this, 20)
                     if(it != null)
                     {
                         it.destroy()

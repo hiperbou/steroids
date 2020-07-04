@@ -20,10 +20,7 @@ import com.soywiz.korma.geom.cos
 import com.soywiz.korma.geom.sin
 import extensions.toBool
 import input.getButtonPressed
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.*
 import resources.Resources
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -141,17 +138,7 @@ abstract class Process(parent: Container) : Image(emptyImage) {
             }
 
             override fun removed(views: Views) {
-                println("REMOVING ${pname}")
-                launch {
-                    job.cancel()
-                    println(job.isActive)
-                    println(job.isCancelled)
-                    println(job.isCompleted)
-                    println(job.kdsIsFrozen)
-                    job.join()
-                    println("ACTUALLY CANCELLED ${pname}")
-                }
-
+                job.cancel()
             }
         })
 
