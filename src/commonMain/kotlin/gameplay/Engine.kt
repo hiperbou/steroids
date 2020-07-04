@@ -195,10 +195,7 @@ abstract class Process(parent: Container) : Image(emptyImage) {
 }
 
 
-private var initialized = false
 fun Views.registerProcessSystem() {
-    if(initialized) return
-    initialized = true
     registerStageComponent()
 }
 

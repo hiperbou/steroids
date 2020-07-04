@@ -1,9 +1,11 @@
 import com.soywiz.korge.Korge
 import com.soywiz.korge.scene.Module
 import com.soywiz.korge.scene.Scene
+import com.soywiz.korge.view.Views
 import com.soywiz.korim.color.Colors
 import com.soywiz.korinject.AsyncInjector
 import com.soywiz.korma.geom.SizeInt
+import gameplay.registerProcessSystem
 import scenes.*
 import kotlin.reflect.KClass
 
@@ -22,6 +24,8 @@ object SteroidsGameModule : Module() {
 
 	override suspend fun init(injector: AsyncInjector): Unit = injector.run {
 		//mapInstance(GameState())
+		get<Views>().registerProcessSystem()
+
 		mapPrototype { LoadingScene(/*get()*/) }
 		mapPrototype { TitleScene(/*get()*/) }
 		mapPrototype { GameScene(/*get()*/) }

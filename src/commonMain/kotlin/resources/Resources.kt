@@ -30,8 +30,6 @@ class Resources(private val views: Views) {
         if(loaded) return
         loaded = true
 
-        views.registerProcessSystem()
-
         loadGfx()
         loadMusic()
     }
