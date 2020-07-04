@@ -10,8 +10,10 @@ import com.soywiz.korim.font.readBitmapFont
 
 import com.soywiz.korio.file.std.resourcesVfs
 import gameplay.registerProcessSystem
+import kotlin.native.concurrent.*
 
 class Resources(private val views: Views) {
+    @ThreadLocal
     companion object{
         lateinit var steroidsAtlas: Atlas
 
