@@ -194,7 +194,7 @@ class GameScene() : SceneBase() {
                 if (y>480+16) y-=480+32
                 frame()
             }
-            //destroy()
+            destroy()
         }
     }
 
@@ -323,9 +323,11 @@ class GameScene() : SceneBase() {
 
             val _h = BUTTON_B
 
+            var shoot = 0
+
             loop {
             // Lee teclas y actualiza el ángulo de la nave
-                if (key(_right)) angle -= PI/16
+                if (true || key(_right)) angle -= PI/16
                 if (key(_left)) angle += PI/16
 
                 if (key(_up)) {                     // Calcula el avance con formula
@@ -353,7 +355,9 @@ class GameScene() : SceneBase() {
                 if (x>640+16) x-=640+32
                 if (y>480+16) y-=480+32
 
-                if (key(_space) || key (_control)) {    // Comprueba la tecla de disparo
+                shoot++
+                if (shoot>3 || key(_space) || key (_control)) {    // Comprueba la tecla de disparo
+                    shoot = 0
                     if (disparo.toBool()) {                        // Y si se puede dispara
                         disparo = 0
                         disparo_nave(x, y, angle)        // Dispara, creando un proceso tipo disparo nave
